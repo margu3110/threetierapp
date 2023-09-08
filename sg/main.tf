@@ -2,26 +2,26 @@ variable "vpc_id" {
     type = string
 }
 
+variable "web_ports" {
+    type        = list(number)
+    description = "list of web ports"
+    default     = [80,443] 
+}
+
 ### Create Web Security Group
 resource "aws_security_group" "web-sg" {
   name        = "Web-SG"
   description = "Allow HTTP Inbound Traffic"
   vpc_id      = var.vpc_id
 
-  ingress {
-    description = "HTTP from VPC"
-    from_port   = 80
-    to_port     = 80
+  dynamic "ingress" {
+    for_each = var.web_ports
+    content {
+    from_port   = ingress.value
+    to_port     = ingress.value
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  ingress {
-    description = "HTTPS from VPC"
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    }
   }
 
   egress {
