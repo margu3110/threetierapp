@@ -7,6 +7,12 @@ variable "db_password" {
   sensitive   = true
 }
 
+### App name
+variable "appName" {}
+
+### SSH key name
+variable "instance_key" {}
+
 ### Count variable
 variable "item_count" {
   description = "default count used to set AZs and instances"
@@ -53,7 +59,7 @@ variable "rds_instance" {
   default = {
     allocated_storage   = 10
     engine              = "mysql"
-    engine_version      = "8.0.20"
+    engine_version      = "8.0.33"
     instance_class      = "db.t2.micro"
     multi_az            = true
     name                = "my_db"
@@ -61,7 +67,7 @@ variable "rds_instance" {
   }
 }
 
-### Create DB Variables
+### User DB Variables
 variable "user_information" {
   type = map(any)
   default = {
@@ -75,7 +81,7 @@ variable "user_information" {
 variable "ami_id" {
   description = "default ami"
   type        = string
-  default     = "ami-0cff7528ff583bf9a"
+  default     = "ami-0e1d30f2c40c4c701"
 }
 variable "instance_type" {
   description = "default instance type"
