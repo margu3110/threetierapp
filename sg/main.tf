@@ -1,3 +1,10 @@
+locals {
+    web_ports = [80,443] 
+    ssh_port = 22
+    mysql_port = 3306
+}
+
+
 ### Create Web Security Group
 resource "aws_security_group" "web-sg" {
   name        = "Web-SG"
@@ -5,7 +12,7 @@ resource "aws_security_group" "web-sg" {
   vpc_id      = var.vpc_id
 
   dynamic "ingress" {
-    for_each = var.web_ports
+    for_each = local.web_ports
     content {
     from_port   = ingress.value
     to_port     = ingress.value
@@ -35,8 +42,8 @@ resource "aws_security_group" "webserver-sg" {
 
   ingress {
     description     = "Allow traffic from web layer"
-    from_port       = 80
-    to_port         = 80
+    from_port       = local.web_ports[0]
+    to_port         = local.web_ports[0]
     protocol        = "tcp"
     security_groups = [aws_security_group.web-sg.id]
   }
@@ -62,8 +69,8 @@ resource "aws_security_group" "app-sg" {
 
   ingress {
     description     = "SSH from VPC"
-    from_port       = 22
-    to_port         = 22
+    from_port       = local.ssh_port
+    to_port         = local.ssh_port
     protocol        = "tcp"
     security_groups = [aws_security_group.web-sg.id]
   }
@@ -93,8 +100,8 @@ resource "aws_security_group" "database-sg" {
 
   ingress {
     description     = "Allow traffic from application layer"
-    from_port       = 3306
-    to_port         = 3306
+    from_port       = local.mysql_port
+    to_port         = local.mysql_port
     protocol        = "tcp"
     security_groups = [aws_security_group.webserver-sg.id]
   }
