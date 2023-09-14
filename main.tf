@@ -82,6 +82,10 @@ resource "aws_lb" "external-lb" {
   subnets            = module.subnetModule.subnet_web_facing
 
   enable_deletion_protection = false
+  tags = {
+    Name = "External-LB"
+    appName = var.appName
+  }
 }
 
 ### Create Internal Load Balancer
@@ -93,6 +97,10 @@ resource "aws_lb" "internal-lb" {
   subnets            = module.subnetModule.subnet_application
 
   enable_deletion_protection = false
+  tags = {
+    Name = "Inernal-LB"
+    appName = var.appName
+  }
 }
 
 ### Create an External Target Group
@@ -101,6 +109,10 @@ resource "aws_lb_target_group" "external-elb" {
   port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.vpc-1.id
+  tags = {
+    Name = "ExternalTargetGroup"
+    appName = var.appName
+  }
 }
 
 ### Create and Internal Target Group
@@ -109,6 +121,10 @@ resource "aws_lb_target_group" "internal-elb" {
   port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.vpc-1.id
+  tags = {
+    Name = "InternalTargetGroup"
+    appName = var.appName
+  }
 }
 
 ### Create Target Group Attachment
@@ -163,7 +179,7 @@ resource "aws_instance" "webserver" {
   count                  = var.item_count
   key_name        		   = var.instance_key
   ami                    = var.ami_id
-  instance_type          = var.instance_type
+  instance_type          = lookup(var.instance_type,terraform.workspace)
   availability_zone      = var.availability_zone_names[count.index]
   vpc_security_group_ids = [module.sgModule.webserver_sg_id]
   subnet_id              = module.subnetModule.subnet_web_facing[count.index]
@@ -180,7 +196,7 @@ resource "aws_instance" "appserver" {
   count                  = var.item_count
   key_name        		   = var.instance_key
   ami                    = var.ami_id
-  instance_type          = var.instance_type
+  instance_type          = lookup(var.instance_type,terraform.workspace)
   availability_zone      = var.availability_zone_names[count.index]
   vpc_security_group_ids = [module.sgModule.database_sg_id]
   subnet_id              = module.subnetModule.subnet_application[count.index]
@@ -204,6 +220,10 @@ resource "aws_db_instance" "default" {
   password               = var.user_information.password
   skip_final_snapshot    = var.rds_instance.skip_final_snapshot
   vpc_security_group_ids = [module.sgModule.database_sg_id]
+  tags = {
+    Name = "RDS"
+    appName = var.appName
+  }
 }
 
 ### Create RDS Subnet Group

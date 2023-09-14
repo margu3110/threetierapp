@@ -88,10 +88,6 @@ resource "aws_security_group" "app-sg" {
   }
 }
 
-variable "appName" {
-    type = string
-}
-
 ### Create Database Security Group
 resource "aws_security_group" "database-sg" {
   name        = "Database-SG"

@@ -2,9 +2,13 @@ variable "region" {
     default = "us-east-1"
 }
 
-variable "db_password" {
-  description = "RDS root user password"
-  sensitive   = true
+variable "instance_type" {
+  type = map
+  default = {
+    default = "t2.micro"
+    staging = "t2.micro"
+    prod    = "t2.large"
+  }
 }
 
 ### App name
@@ -82,9 +86,4 @@ variable "ami_id" {
   description = "default ami"
   type        = string
   default     = "ami-0e1d30f2c40c4c701"
-}
-variable "instance_type" {
-  description = "default instance type"
-  type        = string
-  default     = "t2.micro"
 }
