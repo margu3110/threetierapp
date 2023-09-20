@@ -198,7 +198,7 @@ resource "aws_instance" "appserver" {
   ami                    = var.ami_id
   instance_type          = lookup(var.instance_type,terraform.workspace)
   availability_zone      = var.availability_zone_names[count.index]
-  vpc_security_group_ids = [module.sgModule.database_sg_id]
+  vpc_security_group_ids = [module.sgModule.app_sg_id]
   subnet_id              = module.subnetModule.subnet_application[count.index]
 
   tags = {

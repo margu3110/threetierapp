@@ -21,13 +21,6 @@ resource "aws_security_group" "web-sg" {
     }
   }
 
-  ingress {
-    from_port   = local.ssh_port
-    to_port     = local.ssh_port
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
   egress {
     from_port   = 0
     to_port     = 0
@@ -54,6 +47,15 @@ resource "aws_security_group" "webserver-sg" {
     protocol        = "tcp"
     security_groups = [aws_security_group.web-sg.id]
   }
+
+  ingress {
+    description     = "Allow SSH Inbound Traffic"
+    from_port   = local.ssh_port
+    to_port     = local.ssh_port
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
 
   egress {
     from_port   = 0
