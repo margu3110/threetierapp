@@ -34,9 +34,9 @@ module "sgModule" {
 
 ### Create a VPC
 resource "aws_vpc" "vpc-1" {
-  cidr_block = "10.0.0.0/16"
+  cidr_block = var.vpc_cidr
   tags = {
-    Name = "Demo VPC"
+    Name = "Three-tier App demo VPC"
     appName = var.appName
   }
 }
@@ -174,7 +174,7 @@ resource "aws_lb_listener" "internal-elb" {
   }
 }
 
-### Create EC2 Instance
+### Create WebServer Instance
 resource "aws_instance" "webserver" {
   count                  = var.item_count
   key_name        		   = var.instance_key
@@ -207,31 +207,31 @@ resource "aws_instance" "appserver" {
   }
 }
 
-### Create RDS Instance
-resource "aws_db_instance" "default" {
-  allocated_storage      = var.rds_instance.allocated_storage
-  db_subnet_group_name   = aws_db_subnet_group.default.id
-  engine                 = var.rds_instance.engine
-  engine_version         = var.rds_instance.engine_version
-  instance_class         = var.rds_instance.instance_class
-  multi_az               = var.rds_instance.multi_az
-  name                   = var.rds_instance.name
-  username               = var.user_information.username
-  password               = var.user_information.password
-  skip_final_snapshot    = var.rds_instance.skip_final_snapshot
-  vpc_security_group_ids = [module.sgModule.database_sg_id]
-  tags = {
-    Name = "RDS"
-    appName = var.appName
-  }
-}
+# ### Create RDS Instance
+# resource "aws_db_instance" "default" {
+#   allocated_storage      = var.rds_instance.allocated_storage
+#   db_subnet_group_name   = aws_db_subnet_group.default.id
+#   engine                 = var.rds_instance.engine
+#   engine_version         = var.rds_instance.engine_version
+#   instance_class         = var.rds_instance.instance_class
+#   multi_az               = var.rds_instance.multi_az
+#   name                   = var.rds_instance.name
+#   username               = var.user_information.username
+#   password               = var.user_information.password
+#   skip_final_snapshot    = var.rds_instance.skip_final_snapshot
+#   vpc_security_group_ids = [module.sgModule.database_sg_id]
+#   tags = {
+#     Name = "RDS"
+#     appName = var.appName
+#   }
+# }
 
-### Create RDS Subnet Group
-resource "aws_db_subnet_group" "default" {
-  name       = "main"
-  subnet_ids = module.subnetModule.subnet_db
-  tags = {
-    name = "My DB subnet group"
-    appName = var.appName
-  }
-}
+# ### Create RDS Subnet Group
+# resource "aws_db_subnet_group" "default" {
+#   name       = "main"
+#   subnet_ids = module.subnetModule.subnet_db
+#   tags = {
+#     name = "My DB subnet group"
+#     appName = var.appName
+#   }
+# }
